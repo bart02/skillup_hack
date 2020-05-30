@@ -4,8 +4,8 @@
 #include <Servo.h>
 Servo myservo;
 
-const char* ssid     = "DOM";
-const char* password = "artembatalov";
+const char* ssid     = "dir-300";
+const char* password = "Level123";
 
 void setup() {
   Serial.begin(115200);
@@ -19,6 +19,8 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
+
+  myservo.attach(4);
 
   Serial.println("");
   Serial.println("WiFi connected");
