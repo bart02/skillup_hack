@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>HUEX Web</title>
+    <link rel="stylesheet" href="/static/ply.css">
+    <link rel="stylesheet" href="/static/mainstyle.css">
+    <script type="text/javascript" src="/static/jquery.js"></script>
+    <script type="text/javascript" src="/static/spectrum.js"></script>
+    <script type="text/javascript" src="/static/road.js"></script>
+    <link rel='stylesheet' href='/static/spectrum.css'/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/ico/favicon-16x16.png">
+    <link rel="manifest" href="/static/ico/site.webmanifest">
+    <link rel="mask-icon" href="/static/ico/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/ico/favicon.ico">
+    <meta name="msapplication-TileColor" content="#00aba9">
+    <meta name="msapplication-config" content="/static/ico/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+<div class="container">
+    <div class="navbar">HUEX Web
+        <div class="img-group"><img onclick="force_land()" alt="" src="/static/svg/land.svg"/><img onclick="refreshh()"
+                                                                                                   alt=""
+                                                                                                   src="/static/svg/refresh.svg"/>
+        </div>
+    </div>
+    <div class="holder">
+        <div class="left-field" id="lf">
+            <canvas class="c" id="c"></canvas>
+        </div>
+        <div style="display: flex; flex-direction: column; width: auto; height: 100%;">
+            <div class="right-field" id="drones-list">
+
+            </div>
+            <div class="road-settings">
+                <div class="road-settings-bgroup levo">
+                    <div onclick="add_object('point')">Add point</div>
+                    <div onclick="add_object('road')">Add road</div>
+                </div>
+                <div class="road-settings-bgroup pravo">
+                    <div onclick="remove_object('point')">Remove point</div>
+                    <div onclick="remove_object('road')">Remove road</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/Ply.js"></script>
+<script type="text/javascript" src="/static/dict.js"></script>
+<script type="text/javascript" src="/static/main.js"></script>
+<script type="text/javascript" src="/static/fabric.min.js"></script>
+<script type="text/javascript" src="/static/map.js"></script>
+<script>
+    update();
+    updateCycle();
+</script>
+</body>
+</html>
