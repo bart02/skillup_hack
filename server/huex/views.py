@@ -1,6 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from huex.copter import Clever, get_distance, threshold
 import random
 from json import load, dump
@@ -50,14 +50,15 @@ def post_telemetry(request):
 
     for copter in copters:
         if copter.ip == ip:
-            copter.x = float(request.GET.get("x"))
-            copter.y = float(request.GET.get("y"))
-            copter.z = float(request.GET.get("z"))
-            # i.yaw = float(request.GET.get("yaw"))
-            if str(float(request.GET.get("cell_voltage"))) == 'nan':
+            if request.GET.get('point') and request.GET.get('point_to'):
+                copter.x = float(0)
+                copter.y = float(0)
+                copter.z = float(0)
                 copter.voltage = 0
-            else:
-                copter.voltage = float(request.GET.get("cell_voltage"))
+                copter.point(int(request.GET.get('point')), int(request.GET.get('point_to')))
+            if request.GET.get('arrived') is not None and copter.path:
+                copter.point(int(copter.path[0][:-1]), int(copter.path[1][:-1]))
+                copter.toNewTelem(copters)
             return JsonResponse(copter.toNewTelem(copters))
 
 
@@ -92,12 +93,18 @@ def send_command(request):
     if data['command'] == 'build_path':
         try:
             if not copters[int(data["id"])].path:
-                path = build_path(str(data['o']) + '0', str(data['t']) + '0')
+                path = build_path(str(copters[int(data["id"])].point_to) + '0', str(data['t']) + '0')
+                print(path)
                 copters[int(data["id"])].path += path
             else:
                 return JsonResponse({'m': 'busy'})
         except:
             return JsonResponse({"m": "no way"})
+    elif data['command'] == 'arrived':
+        copter = copters[int(data["id"])]
+        if copter.path:
+            copter.point(int(copter.path[0][:-1]), int(copter.path[1][:-1]))
+            copter.toNewTelem(copters)
     elif data['command'] == 'force_land':
         copters[int(data["id"])].force_landed = True
     return JsonResponse({"m": "ok"})
@@ -299,3 +306,22 @@ def ip_status(request):
             return JsonResponse({"status": copter.get_status()})
 
     return JsonResponse({"status": 'wrong'})
+
+shlak = 0
+
+
+def shlakaum(request):
+    return HttpResponse(str(shlak), content_type="text/plain")
+
+
+def shlakaum1(request):
+    global shlak
+    shlak = 1
+    return shlakaum(request)
+
+
+def shlakaum0(request):
+    global shlak
+    shlak = 0
+    return shlakaum(request)
+

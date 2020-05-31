@@ -85,8 +85,8 @@ function addLabel(id, el) {
         "<div class ='voltage' id = '" + id + "voltage'></div></div>" +
         "</div><div class='elbutto'>" +
         "<div onclick='land(" + id + ")' class='elbut' style='margin: 8px 8px 4px 8px;'>" +
-        "Land</div><div class='elbut' onclick='flyto(" + id + ")' style='margin: 4px 8px 8px 8px;'>" +
-        "Fly to</div></div>" +
+        "Arrived</div><div class='elbut' onclick='flyto(" + id + ")' style='margin: 4px 8px 8px 8px;'>" +
+        "Go to</div></div>" +
         "</div>" +
         "<div class='colorel' id='" + id + "colorpicker'></div></div><hr id='" + id + "hr' />";
     /*id='" + id + "color'*/
@@ -108,19 +108,14 @@ function toHex(c) {
     return col
 }
 
-function land(id) {
-    choose_id = parseInt(id);
-    choosing = true;
-    adding_point = false;
-    adding_line = false;
-    remove_point = false;
-    remove_line = false;
-    choose_type = "land";
-    canvas.backgroundColor = "#bdbdbd";
-    for (let i = 0; i < canvas._objects.length; i++) {
-        canvas._objects[i].set('opacity', 0.8);
-    }
-    canvas.renderAll();
+function land(i) {
+    let request = new XMLHttpRequest();
+    let send_data = {
+        id: i,
+        command: 'arrived'
+    };
+    request.open('GET', '/send?' + Object.entries(send_data).map(e => e.join('=')).join('&'), true);
+    request.send(null);
 }
 
 function force_land() {

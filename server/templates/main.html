@@ -22,8 +22,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="navbar">HUEX Web
-        <div class="img-group"><img onclick="force_land()" alt="" src="/static/svg/land.svg"/><img onclick="refreshh()"
+    <div class="navbar">Providence Web <font size="1">(Forked from HUEX)</font>
+        <div class="img-group"><img onclick="force_land()" alt="" src="/static/svg/stop-sign.svg" style="filter: invert(97%) sepia(100%) saturate(0%) hue-rotate(39deg) brightness(102%) contrast(104%);"/><img onclick="refreshh()"
                                                                                                    alt=""
                                                                                                    src="/static/svg/refresh.svg"/>
         </div>
@@ -40,10 +40,12 @@
                 <div class="road-settings-bgroup levo">
                     <div onclick="add_object('point')">Add point</div>
                     <div onclick="add_object('road')">Add road</div>
+                    <div onclick="open_gate()">Open gate</div>
                 </div>
                 <div class="road-settings-bgroup pravo">
                     <div onclick="remove_object('point')">Remove point</div>
                     <div onclick="remove_object('road')">Remove road</div>
+                    <div onclick="close_gate()">Close gate</div>
                 </div>
             </div>
         </div>
@@ -54,6 +56,14 @@
 <script type="text/javascript" src="/static/main.js"></script>
 <script type="text/javascript" src="/static/fabric.min.js"></script>
 <script type="text/javascript" src="/static/map.js"></script>
+<script>
+    function open_gate() {
+        fetch('/s1');
+    }
+    function close_gate() {
+        fetch('/s0');
+    }
+</script>
 <script>
     update();
     updateCycle();

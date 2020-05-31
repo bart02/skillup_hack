@@ -15,5 +15,8 @@ urlpatterns = [
     path('ask_taxi', views.ask_taxi),  # For asking taxi
     path('get_dist', views.get_dist),  # For counting distance
     path('get_busy_points', views.get_busy_points),
-    path('ip_status', views.ip_status)
+    path('ip_status', views.ip_status),
+    path('s', views.shlakaum),
+    path('s1', views.shlakaum1),
+    path('s0', views.shlakaum0)
 ]

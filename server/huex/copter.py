@@ -2,6 +2,7 @@ import random
 from json import load
 from math import atan2, pi
 import consts as c
+from povors import povors
 
 threshold = 0.2  # meters
 dangerous_threshold = 0.3
@@ -15,6 +16,8 @@ class Clever:
     z = 0
     yaw = -pi / 2
     voltage = 0
+    point_to = 0
+    point_now = 0
     led = '#000000'
     status = "land"
     last_point = -1
@@ -83,9 +86,10 @@ class Clever:
             with open('static/roads.json', 'r') as f:
                 file_data = load(f)
 
-                if self.path[0] == '-1':
-                    self.last_point = self.path.pop(0)
-                    self.busy_points.pop()
+                # print(self.path[0][-1:])
+
+                if self.path[0] == '-1' or len(self.path) == 1:
+                    self.path = []
                     self.status = 'land'
                     return {
                         "led": self.led,
@@ -98,31 +102,35 @@ class Clever:
                 n = int(self.path[0][:-1])
                 nav_point = file_data['points'][n]
                 nav_point['z'] = c.first_layer_height
-
-                if self.path[0][-1:] == '0':
-                    nav_point['z'] = c.first_layer_height
-                elif self.path[0][-1:] == '1':
-                    nav_point['z'] = c.second_layer_height
-                dist = get_distance(nav_point['x'], nav_point['y'], nav_point['z'], self.x, self.y, self.z)
-                collisions = check_collisions(self, copters)
-                if not collisions:
-                    self.status = 'fly'
-                if (dist < threshold) and (not collisions):
+                #
+                # if self.path[0][-1:] == '0':
+                #     nav_point['z'] = c.first_layer_height
+                # elif self.path[0][-1:] == '1':
+                #     nav_point['z'] = c.second_layer_height
+                dist = get_distance(nav_point['x'], nav_point['y'], nav_point['z'], self.x, self.y, nav_point['z'])
+                # print(dist)
+                # collisions = check_collisions(self, copters)
+                # if not collisions:
+                #     self.status = 'fly'
+                if (dist < threshold):
                     try:
                         self.last_point = self.path.pop(0)
                     except:
                         self.last_point = -1
                     return self.toNewTelem(copters)
-                else:
-                    self.status = 'fly'
-                    return {
-                        "led": self.led,
-                        "status": self.status,
-                        "pose": {
-                            "x": nav_point['x'], "y": nav_point['y'], "z": nav_point['z'],
-                            "yaw": self.yaw
-                        }
+                self.status = 'fly'
+                print(self.point_now, int(self.path[0][:-1]), int(self.path[1][:-1]),
+                      povors.get((self.point_now, int(self.path[0][:-1]), int(self.path[1][:-1]))))
+                return {
+                    "led": self.led,
+                    "status": self.status,
+                    "point": n,
+                    "turn": povors.get((self.point_now, int(self.path[0][:-1]), int(self.path[1][:-1]))),
+                    "pose": {
+                        "x": nav_point['x'], "y": nav_point['y'], "z": nav_point['z'],
+                        "yaw": self.yaw
                     }
+                }
 
     def get_status(self):
         if 0 < len(self.busy_points) <= 1:
@@ -134,6 +142,15 @@ class Clever:
             return 'flight_to_human'
         else:
             return 'landed'
+
+    def point(self, point_n, to):
+        with open('static/roads.json', 'r') as f:
+            points = load(f)['points']
+        self.x = points[point_n]['x']
+        self.y = points[point_n]['y']
+        self.point_to = to
+        self.point_now = point_n
+
 
 
 def check_collisions(c, copters):
