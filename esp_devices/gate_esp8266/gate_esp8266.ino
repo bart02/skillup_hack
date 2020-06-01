@@ -5,8 +5,8 @@
 #include <Servo.h>
 Servo myservo;
 
-const char* ssid     = "DOM";
-const char* password = "artembatalov";
+const char* ssid     = "";
+const char* password = "";
 
 void setup() {
   Serial.begin(115200);
