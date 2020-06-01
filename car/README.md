@@ -1,12 +1,12 @@
 # Настройка импровизированного робоавтомобиля
 Чтобы скачать проект на сервер выполните команду 
 ```bash
-git clone https://github.com/bart02/popkov_hackaton
+git clone https://github.com/bart02/skillup_hack
 ``` 
 
 Установить на устройство необходимые библиотеки
 ```bash
-cd popkov_hackaton/car
+cd skillup_hack/car
 pip install -r requirements.txt
 ```
 

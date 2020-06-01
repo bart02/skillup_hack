@@ -1,11 +1,11 @@
 # Настройка сервера
 Чтобы скачать проект на сервер выполните команду 
 ```bash
-git clone https://github.com/bart02/popkov_hackaton
+git clone https://github.com/bart02/skillup_hack
 ``` 
 Установить на устройство необходимые библиотеки
 ```bash
-cd popkov_hackaton/server
+cd skillup_hack/server
 pip install -r requirements.txt
 ```
 Теперь можно запустить сервер написав в командную строку
