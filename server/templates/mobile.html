@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
+    <title>HUEX.mobile</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/static/materialize/materialize.min.css" media="screen,projection"/>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/ico/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/ico/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/ico/favicon-16x16.png">
+    <link rel="manifest" href="/static/ico/site.webmanifest">
+    <link rel="mask-icon" href="/static/ico/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/ico/favicon.ico">
+    <meta name="msapplication-TileColor" content="#00aba9">
+    <meta name="msapplication-config" content="/static/ico/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <style>
+        html, body, .map, .end {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav .brand-logo.center {
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .preloader-wrapper.adaptive {
+            width: 25vmin;
+            height: 25vmin;
+        }
+
+        .preloader-center {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+
+        .modal.bottom-sheet {
+            max-height: 70%;
+        }
+    </style>
+
+    <script type="text/javascript"
+            src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=6e0c50d8-b2ec-4507-b180-d418767b28f5"></script>
+</head>
+
+<body>
+<div style="position:absolute; z-index: 10; width: 100%">
+    <nav style="background-color: #000000">
+        <div class="nav-wrapper">
+            <img class="brand-logo center" src="/static/logo.svg?v=20" height="50px" alt="HUEX.mobile">
+        </div>
+    </nav>
+    <div class="card-panel">
+        <h5 class="center-align" id="askFrom">Выберите точку отправления на карте или <a class="modal-trigger"
+                                                                                         href="#from">из списка</a></h5>
+        <h5 class="center-align" id="askTo" style="display: none;">Выберите точку прибытия на карте или <a
+                class="modal-trigger" href="#to">из списка</a></h5>
+    </div>
+</div>
+
+<div id="map" class="map"></div>
+<div class="end" id="end" style="top:0; position:absolute; z-index: 20000; background-color: #ffffff; display: none;">
+    <table style="height: 100%; border-collapse: unset;">
+        <tr>
+            <td style="vertical-align: middle; text-align: center;"><h3 id="loaderText"></h3></td>
+        </tr>
+    </table>
+
+    <div class="preloader-wrapper adaptive active preloader-center" id="loader">
+        <div class="spinner-layer spinner-blue">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+                <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-red">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+                <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-yellow">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+                <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+
+        <div class="spinner-layer spinner-green">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+                <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Structure -->
+<div id="from" class="modal bottom-sheet">
+    <div class="modal-content">
+        <h4>Откуда летим?</h4>
+        <div class="collection">
+            {% for i in array %}
+                <a class="collection-item modal-close" id="from{{ i }}" onclick="fromSel(this, {{ i }})">{{ i }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <!--<div class="modal-footer">-->
+    <!--<a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>-->
+    <!--</div>-->
+</div>
+
+<div id="to" class="modal bottom-sheet">
+    <div class="modal-content">
+        <h4>Куда летим?</h4>
+        <div class="collection">
+            {% for i in array %}
+                <a class="collection-item modal-close" id="to{{ i }}" onclick="toSel(this, {{ i }})">{{ i }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <!--<div class="modal-footer">-->
+    <!--<a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>-->
+    <!--</div>-->
+</div>
+
+<div id="final" class="modal modalnd bottom-sheet">
+    <div class="modal-content">
+        <div class="row">
+            <div class="input-field col s12 l6" onclick="fromChange(); return false;">
+                <i class="material-icons prefix">flight_takeoff</i>
+                <input id="finalFrom" type="text" class="" disabled>
+                <label for="finalFrom">Откуда</label>
+            </div>
+            <div class="input-field col s12 l6" onclick="toChange(); return false;">
+                <i class="material-icons prefix">flight_land</i>
+                <input id="finalTo" type="text" class="" disabled>
+                <label for="finalTo">Куда</label>
+            </div>
+        </div>
+
+        <div class="progress" id="progress">
+            <div class="indeterminate"></div>
+        </div>
+
+        <div class="row" id="flightInfo">
+            <div class="col s6">
+                <span>Расстояние: </span><span id="dist"></span>
+            </div>
+            <div class="col s6">
+                <span>Стоимость: </span><span id="cost"></span>
+            </div>
+
+            <div class="col s12">
+                <a class="waves-effect waves-light btn" style="width: 100%" onclick="order()">Полетели!</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/static/materialize/materialize.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let dismissible = document.querySelectorAll('.modal');
+        M.Modal.init(dismissible/*, {'dismissible': false}*/);
+        let notDismissible = document.querySelectorAll('.modalnd');
+        M.Modal.init(notDismissible, {'dismissible': false});
+    });
+</script>
+
+<script>
+    let coords = {{ coords|safe }};
+    for (let i = 0, l = coords.length; i < l; i++) {
+        coords[i] = coords[i].reverse()
+    }
+</script>
+<script src="/static/mobile.js"></script>
+
+</body>
+</html>
