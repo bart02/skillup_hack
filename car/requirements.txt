@@ -1,0 +1,4 @@
+numpy>=1.11.0
+pyserial>=3
+requests>=2.0.0
+pyzmq>=17
